@@ -2,7 +2,7 @@ module.exports = {
     multipleMongooseToObject: function (mongooseArrays) {
         return mongooseArrays.map(ele => ele.toObject());
     },
-    mongooseToObject: function (mongooseElement) {
+    singleMongooseToObject: function (mongooseElement) {
         return mongooseElement ? mongooseElement.toObject() : mongooseElement;
     }
 }

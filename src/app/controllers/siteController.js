@@ -1,20 +1,33 @@
-const User = require('../models/User');
-const { multipleMongooseToObject } = require('../../util/mongoose')
+const { multipleMongooseToObject } = require('../../util/mongoose');
+const Course = require('../models/Course');
 
 class siteController {
     //[GET] /
     index(req, res) {
-        User.find({})
-            .then(users => {
-                res.render('home', { users: multipleMongooseToObject(users) });
-            })
-            .catch(error => next(error));
+        res.render('home');
     }
 
+    //[GET] /home
+    home(req, res) {
+        res.render('home');
+    }
 
-    //[GET] /search
-    search(req, res) {
-        res.render('search');
+    //[GET] /create
+    create(req, res) {
+        res.render('create');
+    }
+
+    //[POST] /store-course
+    store(req, res) {
+        const formData = req.body;
+        formData.videoID = formData.videoID.split('/watch?v=')[1] ? formData.videoID.split('/watch?v=')[1] : 'dQw4w9WgXcQ';
+        formData.image = `https://img.youtube.com/vi/${formData.videoID}/sddefault.jpg`;
+        const newCourse = new Course(formData);
+        newCourse.save()
+            .then(() => res.redirect('/'))
+            .catch(error => {
+
+            });
     }
 }
 
