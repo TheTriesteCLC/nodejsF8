@@ -3,11 +3,28 @@ const Course = require('../models/Course');
 
 class meController {
     //[GET] /me/stored-courses
-    store(req, res, next) {
+    async store(req, res, next) {
+        const delCount = await Course.countDocumentsWithDeleted({ deleted: true });
+
         Course.find({})
-            .then((courses) =>
+            .then((courses) => {
                 res.render("me/storedCourses", {
-                    courses: multipleMongooseToObject(courses)
+                    courses: multipleMongooseToObject(courses),
+                    delCount
+                });
+            })
+            .catch(next)
+    }
+
+    //[GET] /me/trash/course
+    async trashCourse(req, res, next) {
+        const storedCount = await Course.countDocuments();
+
+        Course.findWithDeleted({ deleted: true })
+            .then((courses) =>
+                res.render("me/trashCourses", {
+                    courses: multipleMongooseToObject(courses),
+                    storedCount
                 }))
             .catch(next)
     }

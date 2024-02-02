@@ -1,0 +1,104 @@
+<div class="mt-4">
+    <a href="/me/stored-courses" class="btn-link">Courses list ({{storedCount}})</a>
+    <h3>Khóa học đã xóa</h3>
+    <table class="table mt-4">
+        <thead>
+            <tr>
+            <th scope="col">#</th>
+            <th scope="col">Tên khóa học</th>
+            <th scope="col">Số người học</th>
+            <th scope="col">Video ID</th>
+            <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each courses}}
+            <tr>
+                <th scope="row">{{sum @index 1}}</th>
+                <td>{{this.name}}</td>
+                <td>{{this.users}}</td>
+                <td>{{this.videoID}}</td>
+                <td>
+                    <button class="btn btn-link restore-btn" data-course-id="{{this._id}}">Restore</button>
+                    <button class="btn btn-link" data-bs-toggle="modal" data-bs-target="#modal-delete-course" data-course-name="{{this.name}}" data-course-id="{{this._id}}">Delete pemanent</button>
+                </td>
+            </tr>
+
+            {{else}}
+            <tr>
+                <td colspan="5" class="text-center">
+                    No courses deleted.
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+
+{{!-- Restore hidden form --}}
+<form id="hidden-restore-form" method="POST" action=""></form>
+
+{{!-- Delete hidden form --}}
+<form id="hidden-delete-form" method="POST" action=""></form>
+
+{{!-- Delete modal --}}
+<div class="modal fade" id="modal-delete-course" tabindex="-1" aria-labelledby="modal-course-label" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 id="modal-course-label">Delete permanent confirmation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body modal-title">
+            Are you sure you want to delete "" course?
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <a href="#" class="modal-delete-link">
+                <button type="button" class="btn btn-primary">Delete</button>    
+            </a>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+    const restoreBtnAll = document.getElementsByClassName('restore-btn');
+    const hiddenRestoreForm = document.getElementById('hidden-restore-form');
+
+    Array.from(restoreBtnAll).forEach(function(restoreBtn) {
+        restoreBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            const courseID = restoreBtn.getAttribute('data-course-id');
+            hiddenRestoreForm.action = `/restore-course/${courseID}`;
+            hiddenRestoreForm.submit();
+        })
+    })
+
+    const courseModal = document.getElementById('modal-delete-course')
+    courseModal.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        const button = event.relatedTarget;
+        // Extract info from data-bs-* attributes
+        const courseName = button.getAttribute('data-course-name');
+        const courseID = button.getAttribute('data-course-id');
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        const modalTitle = courseModal.querySelector('.modal-title');
+        const modalBodyInput = courseModal.querySelector('.modal-body input');
+        const modalDeleteLink = courseModal.querySelector('.modal-delete-link');
+        const hiddenDeleteForm = document.getElementById('hidden-delete-form');
+
+        modalTitle.textContent = `Are you sure you want to delete "${courseName}" course PERMANENTLY?`;
+        //console.log(`/delete-course/${courseID}?_method=DELETE`)
+
+        modalDeleteLink.onclick = function() {
+            //alert(`/delete-course/${courseID}?_method=DELETE`);
+            hiddenDeleteForm.action = `/delete-permanent-course/${courseID}`;
+            hiddenDeleteForm.submit();
+        }
+    })
+</script>
