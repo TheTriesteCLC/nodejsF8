@@ -10,7 +10,7 @@
             <option disabled selected value>-- Select operation --</option>
             <option value="delete">Delete</option>
         </select>
-        <button id="apply-btn" class="btn btn-primary disabled">Apply</button>
+        <button id="apply-btn" class="btn btn-primary disabled" data-bs-toggle="modal" data-bs-target="#modal-delete-course">Apply</button>
     </div>
     <table class="table mt-4">
         <thead>
@@ -28,7 +28,7 @@
             <tr>
                 <td>
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" name="courseIDs[]" value="{{this._id}}">
+                        <input type="checkbox" class="form-check-input" name="courseIDs[]" value="{{this._id}}" data-course-name="{{this.name}}">
                         {{!-- <label class="form-check-label" for="exampleCheck1"></label> --}}
                     </div>
                 </td>
@@ -38,7 +38,7 @@
                 <td>{{this.videoID}}</td>
                 <td>
                     <a href="/update-course/{{this.slug}}" class="btn btn-link">Update</a>
-                    <button class="btn btn-link course-delete-btn" data-bs-toggle="modal" data-bs-target="#modal-delete-course" data-course-name="{{this.name}}" data-course-id="{{this._id}}">Delete</button>
+                    {{!-- <button class="btn btn-link course-delete-btn" data-course-name="{{this.name}}" data-course-id="{{this._id}}">Delete</button> --}}
                 </td>
             </tr>
 
@@ -57,7 +57,7 @@
 </form>
 
 {{!-- Delete hidden form --}}
-<form id="hidden-delete-form" method="POST" action=""></form>
+{{!-- <form id="hidden-delete-form" method="POST" action=""></form> --}}
 
 {{!-- Delete modal --}}
 <div class="modal fade" id="modal-delete-course" tabindex="-1" aria-labelledby="modal-course-label" aria-hidden="true">
@@ -71,20 +71,25 @@
             Are you sure you want to delete "" course?
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <a href="#" class="modal-delete-link">
-                <button type="button" class="btn btn-primary">Delete</button>    
+                <button type="button" class="btn btn-danger">Delete</button>    
             </a>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
     </div>
 </div>
 </div>
 
 <script>
-    let courseItemCheckbox = $('input[name="courseIDs[]"]')
+    let courseItemCheckbox = $('input[name="courseIDs[]"]');
     const applyBtn = $('#apply-btn');
     const containerForm = $('form[name="container-form"]');
+    const checkboxAll = $('#checkbox-all');
+    const selectAction = $('#select-action');
 
+    applyBtn.click(function(e) {
+            e.preventDefault();
+    })
     containerForm.on('submit',function(e) {
         if(applyBtn.hasClass('disabled')) {
             e.preventDefault();
@@ -98,15 +103,12 @@
             applyBtn.removeClass('disabled');
         }else {
             applyBtn.addClass('disabled');
-            applyBtn.click(function(e) {
-                e.preventDefault();
-            })
+            //applyBtn.click(function(e) {
+                //e.preventDefault();
+            //})
         }
-
     }
     
-    const checkboxAll = $('#checkbox-all');
-    const checkboxCourses = $('')
     checkboxAll.change(function() {
         let checkboxAllChecked = $(this).prop('checked');
         if(checkboxAllChecked) {
@@ -129,6 +131,24 @@
 
     const courseModal = document.getElementById('modal-delete-course')
     courseModal.addEventListener('show.bs.modal', function (event) {
+        let courseItemCheckboxChecked = $('input[name="courseIDs[]"]:checked').toArray();
+        const chosenCoursesName = courseItemCheckboxChecked.map(function(checkbox) {
+            return ` <li class="list-group-item">${checkbox.getAttribute('data-course-name')}</li>`
+        }).join('\n')
+        console.log(chosenCoursesName);
+
+        const modalTitle = courseModal.querySelector('.modal-title');
+        const modalDeleteLink = courseModal.querySelector('.modal-delete-link');
+
+        modalTitle.innerHTML = `Are you sure you want to ${selectAction.val()} these courses?
+        <ul class="list-group list-group-flush">
+            ${chosenCoursesName}
+        </ul>`;
+        modalDeleteLink.onclick = function() {
+            containerForm.submit();
+        }
+    })
+    /*courseModal.addEventListener('show.bs.modal', function (event) {
         // Button that triggered the modal
         const button = event.relatedTarget;
         // Extract info from data-bs-* attributes
@@ -151,5 +171,6 @@
             hiddenDeleteForm.action = `/delete-course/${courseID}`;
             hiddenDeleteForm.submit();
         }
-    })
+    }) 
+    */
 </script>
