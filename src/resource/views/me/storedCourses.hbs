@@ -1,176 +1,164 @@
-<form name="container-form" class="mt-4" method="POST" action="/handle-course-form-actions">
-    <h3>Khóa học của tôi</h3>
-    <a href="/me/trash/course" class="btn-link"> Deleted course ({{delCount}})</a>
-    <div class="mt-3 d-flex align-items-center">
-        <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="checkbox-all">
-            <label class="form-check-label" for="checkbox-all">Select all courses</label>
-        </div>
-        <select id="select-action" class="form-select mx-4 w-25 " aria-label="Default select example" name="action" required>
-            <option disabled selected value>-- Select operation --</option>
-            <option value="delete">Delete</option>
-        </select>
-        <button id="apply-btn" class="btn btn-primary disabled" data-bs-toggle="modal" data-bs-target="#modal-delete-course">Apply</button>
+<form
+  name="container-form"
+  class="mt-4"
+  method="POST"
+  action="/handle-course-form-actions"
+>
+  <h3>Khóa học của tôi</h3>
+  <a href="/me/trash/course" class="btn-link"> Deleted course ({{delCount}})</a>
+  <div class="mt-3 d-flex align-items-center">
+    <div class="form-check">
+      <input type="checkbox" class="form-check-input" id="checkbox-all" />
+      <label class="form-check-label" for="checkbox-all">Select all courses</label>
     </div>
-    <table class="table mt-4">
-        <thead>
-            <tr>
-            <th></th>
-            <th scope="col">#</th>
-            <th scope="col">Tên khóa học</th>
-            <th scope="col">Số người học</th>
-            <th scope="col">Video ID</th>
-            <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each courses}}
-            <tr>
-                <td>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" name="courseIDs[]" value="{{this._id}}" data-course-name="{{this.name}}">
-                        {{!-- <label class="form-check-label" for="exampleCheck1"></label> --}}
-                    </div>
-                </td>
-                <th scope="row">{{sum @index 1}}</th>
-                <td>{{this.name}}</td>
-                <td>{{this.users}}</td>
-                <td>{{this.videoID}}</td>
-                <td>
-                    <a href="/update-course/{{this.slug}}" class="btn btn-link">Update</a>
-                    {{!-- <button class="btn btn-link course-delete-btn" data-course-name="{{this.name}}" data-course-id="{{this._id}}">Delete</button> --}}
-                </td>
-            </tr>
+    <select
+      id="select-action"
+      class="form-select mx-4 w-25"
+      aria-label="Default select example"
+      name="action"
+      required
+    >
+      <option disabled selected value>-- Select operation --</option>
+      <option value="delete">Delete</option>
+    </select>
+    <button
+      id="apply-btn"
+      class="btn btn-primary disabled"
+      data-bs-toggle="modal"
+      data-bs-target="#modal-delete-course"
+    >Apply</button>
+    <button
+      id="apply-btn"
+      class="btn btn-primary disabled"
+      data-bs-toggle="modal"
+      data-bs-target="#modal-delete-course"
+    >Apply</button>
+  </div>
+  <table class="table mt-4">
+    <thead>
+      <tr>
+        <th></th>
+        <th scope="col">#</th>
+        <th scope="col">Tên khóa học</th>
+        <th scope="col">Số người học</th>
+        <th scope="col">Video ID</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each courses}}
+        <tr>
+          <td>
+            <div class="form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                name="courseIDs[]"
+                value="{{this._id}}"
+                data-course-name="{{this.name}}"
+              />
+              {{! <label class="form-check-label" for="exampleCheck1"></label> }}
+            </div>
+          </td>
+          <th scope="row">{{sum @index 1}}</th>
+          <td>{{this.name}}</td>
+          <td>{{this.users}}</td>
+          <td>{{this.videoID}}</td>
+          <td>
+            <a
+              href="/update-course/{{this.slug}}"
+              class="btn btn-link"
+            >Update</a>
+            {{!-- <button class="btn btn-link course-delete-btn" data-course-name="{{this.name}}" data-course-id="{{this._id}}">Delete</button> --}}
+          </td>
+        </tr>
 
-            {{else}}
-            <tr>
-                <td colspan="5" class="text-center">
-                    No courses found.
-                    <a href="/create-course" class="btn-link">
-                        Create new course
-                    </a>
-                </td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
+      {{else}}
+        <tr>
+          <td colspan="5" class="text-center">
+            No courses found.
+            <a href="/create-course" class="btn-link">
+              Create new course
+            </a>
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
 </form>
 
-{{!-- Delete hidden form --}}
-{{!-- <form id="hidden-delete-form" method="POST" action=""></form> --}}
+{{! Delete hidden form }}
+{{! <form id="hidden-delete-form" method="POST" action=""></form> }}
 
-{{!-- Delete modal --}}
-<div class="modal fade" id="modal-delete-course" tabindex="-1" aria-labelledby="modal-course-label" aria-hidden="true">
-<div class="modal-dialog">
+{{! Delete modal }}
+<div
+  class="modal fade"
+  id="modal-delete-course"
+  tabindex="-1"
+  aria-labelledby="modal-course-label"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
     <div class="modal-content">
-        <div class="modal-header">
-            <h5 id="modal-course-label">Delete confirmation</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body modal-title">
-            Are you sure you want to delete "" course?
-        </div>
-        <div class="modal-footer">
-            <a href="#" class="modal-delete-link">
-                <button type="button" class="btn btn-danger">Delete</button>    
-            </a>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
+      <div class="modal-header">
+        <h5 id="modal-course-label">Delete confirmation</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body modal-title">
+        Are you sure you want to delete "" course?
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="modal-delete-link">
+          <button type="button" class="btn btn-danger">Delete</button>
+        </a>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+        >Close</button>
+      </div>
     </div>
-</div>
+  </div>
 </div>
 
 <script>
-    let courseItemCheckbox = $('input[name="courseIDs[]"]');
-    const applyBtn = $('#apply-btn');
-    const containerForm = $('form[name="container-form"]');
-    const checkboxAll = $('#checkbox-all');
-    const selectAction = $('#select-action');
-
-    applyBtn.click(function(e) {
-            e.preventDefault();
-    })
-    containerForm.on('submit',function(e) {
-        if(applyBtn.hasClass('disabled')) {
-            e.preventDefault();
-        }
-    })
-
-    function applyBtnSwitch() {
-        let courseItemCheckboxChecked = $('input[name="courseIDs[]"]:checked').length;
-
-        if(courseItemCheckboxChecked != 0) {
-            applyBtn.removeClass('disabled');
-        }else {
-            applyBtn.addClass('disabled');
-            //applyBtn.click(function(e) {
-                //e.preventDefault();
-            //})
-        }
-    }
-    
-    checkboxAll.change(function() {
-        let checkboxAllChecked = $(this).prop('checked');
-        if(checkboxAllChecked) {
-            courseItemCheckbox.prop('checked',true);
-        }else {
-            courseItemCheckbox.prop('checked',false);
-        }
-        applyBtnSwitch();
-    })
-    courseItemCheckbox.change(function() {
-        let courseItemCheckboxCheckedAll = $('input[name="courseIDs[]"]:checked').length === $('input[name="courseIDs[]"]').length;
-        if(courseItemCheckboxCheckedAll) {
-            checkboxAll.prop('checked', true);
-        }else {
-            checkboxAll.prop('checked', false);
-        }
-        applyBtnSwitch();
-    })
-
-
-    const courseModal = document.getElementById('modal-delete-course')
-    courseModal.addEventListener('show.bs.modal', function (event) {
-        let courseItemCheckboxChecked = $('input[name="courseIDs[]"]:checked').toArray();
-        const chosenCoursesName = courseItemCheckboxChecked.map(function(checkbox) {
-            return ` <li class="list-group-item">${checkbox.getAttribute('data-course-name')}</li>`
-        }).join('\n')
-        console.log(chosenCoursesName);
-
-        const modalTitle = courseModal.querySelector('.modal-title');
-        const modalDeleteLink = courseModal.querySelector('.modal-delete-link');
-
-        modalTitle.innerHTML = `Are you sure you want to <strong>${selectAction.val()}</strong> these courses?
-        <ul class="list-group list-group-flush">
-            ${chosenCoursesName}
-        </ul>`;
-        modalDeleteLink.onclick = function() {
-            containerForm.submit();
-        }
-    })
-    /*courseModal.addEventListener('show.bs.modal', function (event) {
-        // Button that triggered the modal
-        const button = event.relatedTarget;
-        // Extract info from data-bs-* attributes
-        const courseName = button.getAttribute('data-course-name');
-        const courseID = button.getAttribute('data-course-id');
-        // If necessary, you could initiate an AJAX request here
-        // and then do the updating in a callback.
-        //
-        // Update the modal's content.
-        const modalTitle = courseModal.querySelector('.modal-title');
-        const modalBodyInput = courseModal.querySelector('.modal-body input');
-        const modalDeleteLink = courseModal.querySelector('.modal-delete-link');
-        const hiddenDeleteForm = document.getElementById('hidden-delete-form');
-
-        modalTitle.textContent = `Are you sure you want to delete "${courseName}" course?`;
-        //console.log(`/delete-course/${courseID}?_method=DELETE`)
-
-        modalDeleteLink.onclick = function() {
-            //alert(`/delete-course/${courseID}?_method=DELETE`);
-            hiddenDeleteForm.action = `/delete-course/${courseID}`;
-            hiddenDeleteForm.submit();
-        }
-    }) 
-    */
+  let courseItemCheckbox = $('input[name="courseIDs[]"]'); const applyBtn =
+  $('#apply-btn'); const containerForm = $('form[name="container-form"]'); const
+  checkboxAll = $('#checkbox-all'); const selectAction = $('#select-action');
+  applyBtn.click(function(e) { e.preventDefault(); })
+  containerForm.on('submit',function(e) { if(applyBtn.hasClass('disabled')) {
+  e.preventDefault(); } }) function applyBtnSwitch() { let
+  courseItemCheckboxChecked = $('input[name="courseIDs[]"]:checked').length;
+  if(courseItemCheckboxChecked != 0) { applyBtn.removeClass('disabled'); }else {
+  applyBtn.addClass('disabled'); //applyBtn.click(function(e) {
+  //e.preventDefault(); //}) } } checkboxAll.change(function() { let
+  checkboxAllChecked = $(this).prop('checked'); if(checkboxAllChecked) {
+  courseItemCheckbox.prop('checked',true); }else {
+  courseItemCheckbox.prop('checked',false); } applyBtnSwitch(); })
+  courseItemCheckbox.change(function() { let courseItemCheckboxCheckedAll =
+  $('input[name="courseIDs[]"]:checked').length ===
+  $('input[name="courseIDs[]"]').length; if(courseItemCheckboxCheckedAll) {
+  checkboxAll.prop('checked', true); }else { checkboxAll.prop('checked', false);
+  } applyBtnSwitch(); }) const courseModal =
+  document.getElementById('modal-delete-course')
+  courseModal.addEventListener('show.bs.modal', function (event) { // Button
+  that triggered the modal const button = event.relatedTarget; // Extract info
+  from data-bs-* attributes const courseName =
+  button.getAttribute('data-course-name'); const courseID =
+  button.getAttribute('data-course-id'); // If necessary, you could initiate an
+  AJAX request here // and then do the updating in a callback. // // Update the
+  modal's content. const modalTitle = courseModal.querySelector('.modal-title');
+  const modalBodyInput = courseModal.querySelector('.modal-body input'); const
+  modalDeleteLink = courseModal.querySelector('.modal-delete-link'); const
+  hiddenDeleteForm = document.getElementById('hidden-delete-form');
+  modalTitle.textContent = `Are you sure you want to delete "${courseName}"
+  course?`; //console.log(`/delete-course/${courseID}?_method=DELETE`)
+  modalDeleteLink.onclick = function() {
+  //alert(`/delete-course/${courseID}?_method=DELETE`); hiddenDeleteForm.action
+  = `/delete-course/${courseID}`; hiddenDeleteForm.submit(); } }) */
 </script>
