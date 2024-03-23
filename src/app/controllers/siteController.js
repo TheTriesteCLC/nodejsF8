@@ -33,7 +33,7 @@ class siteController {
         formData.image = `https://img.youtube.com/vi/${formData.videoID}/sddefault.jpg`;
         const newCourse = new Course(formData);
         newCourse.save()
-            .then(() => res.redirect('/'))
+            .then(() => res.redirect('back'))
             .catch(error => {
 
             });
