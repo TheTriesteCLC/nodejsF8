@@ -3,6 +3,8 @@ const express = require('express');
 const morgan = require('morgan');
 const handleBars = require('express-handlebars');
 
+const SortMiddleware = require('./app/middlewares/SortMiddleware')
+
 const route = require('./routes');
 const db = require('./config/db');
 
@@ -23,6 +25,9 @@ app.use(
 );
 app.use(express.json());
 
+//Custom middlewares
+app.use(SortMiddleware);
+
 //Setup morgan
 app.use(morgan('combined'));
 
@@ -31,6 +36,29 @@ app.engine('hbs', handleBars.engine({
     extname: '.hbs',
     helpers: {
         sum: (a, b) => a + b,
+        sortable: (field, sort) => {
+            const sortType = field === sort.column ? sort.type : 'default';
+
+            const icons = {
+                default: 'fa-regular fa-up-down',
+                asc: 'fa-solid fa-down-long',
+                desc: 'fa-solid fa-up-long'
+            }
+            const types = {
+                default: 'asc',
+                asc: 'desc',
+                desc: 'asc'
+            }
+
+            const icon = icons[sortType];
+            const type = types[sortType]
+
+            return `
+            <a href="?_sort&column=${field}&type=${type}" class="ms-1">
+                <i class="${icon}"></i>
+            </a>
+            `;
+        }
     }
 }));
 app.set('view engine', 'hbs');

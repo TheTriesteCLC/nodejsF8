@@ -17,9 +17,15 @@
             <tr>
             <th></th>
             <th scope="col">#</th>
-            <th scope="col">Tên khóa học</th>
-            <th scope="col">Số người học</th>
-            <th scope="col">Video ID</th>
+            <th scope="col">Tên khóa học 
+                {{{sortable 'name' _sort}}}
+            </th>
+            <th scope="col">Số người học
+                {{{sortable 'users' _sort}}}
+            </th>
+            <th scope="col">Video ID
+                {{{sortable 'videoID' _sort}}}
+            </th>
             <th scope="col"></th>
             </tr>
         </thead>
@@ -87,6 +93,10 @@
     const checkboxAll = $('#checkbox-all');
     const selectAction = $('#select-action');
 
+    selectAction.change(function(e) {
+        applyBtnSwitch();
+    })
+
     applyBtn.click(function(e) {
             e.preventDefault();
     })
@@ -99,7 +109,7 @@
     function applyBtnSwitch() {
         let courseItemCheckboxChecked = $('input[name="courseIDs[]"]:checked').length;
 
-        if(courseItemCheckboxChecked != 0) {
+        if(courseItemCheckboxChecked != 0 && selectAction.val()) {
             applyBtn.removeClass('disabled');
         }else {
             applyBtn.addClass('disabled');

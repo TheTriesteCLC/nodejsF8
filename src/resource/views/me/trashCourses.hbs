@@ -51,7 +51,7 @@
             {{/each}}
         </tbody>
     </table>
-</div>
+</form>
 
 {{!-- Restore hidden form --}}
 {{!-- <form id="hidden-restore-form" method="POST" action=""></form> --}}
@@ -81,55 +81,94 @@
 </div>
 
 <script>
-    let courseItemCheckbox = $('input[name="courseIDs[]"]');
-    const applyBtn = $('#apply-btn');
-    const containerForm = $('form[name="container-form"]');
-    const checkboxAll = $('#checkbox-all');
-    const selectAction = $('#select-action');
+    window.onload = function() {
+        let courseItemCheckbox = $('input[name="courseIDs[]"]');
+        const applyBtn = $('#apply-btn');
+        const containerForm = $('form[name="container-form"]');
+        const checkboxAll = $('#checkbox-all');
+        const selectAction = $('#select-action');
+        const courseModal = document.getElementById('modal-delete-course')
 
-    applyBtn.click(function(e) {
-            e.preventDefault();
-    })
-    containerForm.on('submit',function(e) {
-        if(applyBtn.hasClass('disabled')) {
-            e.preventDefault();
+        selectAction.change(function(e) {
+            applyBtnSwitch();
+        })
+
+        applyBtn.click(function(e) {
+                e.preventDefault();
+        })
+        containerForm.on('submit',function(e) {
+            if(applyBtn.hasClass('disabled')) {
+                e.preventDefault();
+            }
+        })
+
+        function applyBtnSwitch() {
+            let courseItemCheckboxChecked = $('input[name="courseIDs[]"]:checked').length;
+
+            if(courseItemCheckboxChecked != 0 && selectAction.val()) {
+                applyBtn.removeClass('disabled');
+                
+            }else {
+                applyBtn.addClass('disabled');
+                //applyBtn.click(function(e) {
+                    //e.preventDefault();
+                //})
+            }
         }
-    })
 
-    function applyBtnSwitch() {
-        let courseItemCheckboxChecked = $('input[name="courseIDs[]"]:checked').length;
+        checkboxAll.change(function() {
+            let checkboxAllChecked = $(this).prop('checked');
+            if(checkboxAllChecked) {
+                courseItemCheckbox.prop('checked',true);
+            }else {
+                courseItemCheckbox.prop('checked',false);
+            }
+            applyBtnSwitch();
+        })
+        courseItemCheckbox.change(function() {
+            let courseItemCheckboxCheckedAll = $('input[name="courseIDs[]"]:checked').length === $('input[name="courseIDs[]"]').length;
+            if(courseItemCheckboxCheckedAll) {
+                checkboxAll.prop('checked', true);
+            }else {
+                checkboxAll.prop('checked', false);
+            }
+            applyBtnSwitch();
+        })
 
-        if(courseItemCheckboxChecked != 0) {
-            applyBtn.removeClass('disabled');
-            
-        }else {
-            applyBtn.addClass('disabled');
-            //applyBtn.click(function(e) {
-                //e.preventDefault();
-            //})
-        }
+
+        applyBtn.click(function(e) {
+            if(selectAction.val() === 'deletePerm') {
+                var myModal = new bootstrap.Modal(courseModal, {
+                    keyboard: false
+                })
+                myModal.toggle()
+            }else {
+                containerForm.submit();
+            }
+        }) 
+
+        
+        courseModal.addEventListener('show.bs.modal', function (event) {
+            let courseItemCheckboxChecked = $('input[name="courseIDs[]"]:checked').toArray();
+            const chosenCoursesName = courseItemCheckboxChecked.map(function(checkbox) {
+                return ` <li class="list-group-item">${checkbox.getAttribute('data-course-name')}</li>`
+            }).join('\n')
+
+            const modalTitle = courseModal.querySelector('.modal-title');
+            const modalDeleteLink = courseModal.querySelector('.modal-delete-link');
+
+            modalTitle.innerHTML = `Are you sure you want to ${selectAction.val()} these courses?
+            <ul class="list-group list-group-flush">
+                ${chosenCoursesName}
+            </ul>`;
+            modalDeleteLink.onclick = function() {
+                containerForm.submit();
+            }
+        })
     }
+    
 
-    checkboxAll.change(function() {
-        let checkboxAllChecked = $(this).prop('checked');
-        if(checkboxAllChecked) {
-            courseItemCheckbox.prop('checked',true);
-        }else {
-            courseItemCheckbox.prop('checked',false);
-        }
-        applyBtnSwitch();
-    })
-    courseItemCheckbox.change(function() {
-        let courseItemCheckboxCheckedAll = $('input[name="courseIDs[]"]:checked').length === $('input[name="courseIDs[]"]').length;
-        if(courseItemCheckboxCheckedAll) {
-            checkboxAll.prop('checked', true);
-        }else {
-            checkboxAll.prop('checked', false);
-        }
-        applyBtnSwitch();
-    })
-
-    const courseModal = document.getElementById('modal-delete-course')
+    /*const courseModal = document.getElementById('modal-delete-course')
     courseModal.addEventListener('show.bs.modal', function (event) {
         // Button that triggered the modal
         const button = event.relatedTarget;
@@ -153,5 +192,5 @@
             hiddenDeleteForm.action = `/delete-permanent-course/${courseID}`;
             hiddenDeleteForm.submit();
         }
-    })
+    })*/
 </script>
